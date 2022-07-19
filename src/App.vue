@@ -9,4 +9,11 @@ import { RouterView } from 'vue-router';
 </template>
 
 <style>
+.link {
+  color: unset;
+  text-decoration: unset;
+}
+.link:hover {
+  color:#5f2
+}
 </style>
