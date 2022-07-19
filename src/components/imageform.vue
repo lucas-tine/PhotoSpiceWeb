@@ -10,9 +10,18 @@ import router from '../router';
       receivedImage = event.target.files[0]
       isButtonDisabled.value = false
   }
-  const analise = () => {
-    //alert (`analise! ${receivedImage}`)
+  const analyse =  async () => {
+    var data = new FormData()
+    data.append('image', receive_image)
+    const response = await fetch(
+      '/image', 
+      {
+        method: 'POST',
+        body: data
+      }
+    )
     router.push({path: 'confirm'})
+    
   }  
 </script>
 
@@ -20,7 +29,7 @@ import router from '../router';
       <form class="d-flex">
         <input accept="image/png, image/jpeg, image/jpg; capture=camera" 
         type="file" class="btn btn-secondary py-3 m-3" v-on:change="event => receive_image(event)" style="max-width: 500px;"/>
-        <button type="button" v-bind:disabled="isButtonDisabled" class="btn btn-dark py-2 m-3 px-3" @click="_ => analise()" style="max-width: 200px;">
+        <button type="button" v-bind:disabled="isButtonDisabled" class="btn btn-dark py-2 m-3 px-3" @click="_ => analyse()" style="max-width: 200px;">
           ANALISAR
         </button>
       </form>  
