@@ -1,11 +1,16 @@
 <script setup>
+import router from '../router';
+const reload = () => {
+    if (router.currentRoute.value.name == 'home')
+        router.go()
+}
 </script>
 
 <template>
     <header class="container-fluid justify-content-center" style="background-color: black; color:azure">
         <div class="d-md-flex justify-content-evenly p-3 text-center">
             <h1> 
-                <router-link to="/" class="link">
+                <router-link v-on:click="reload()" to="/" class="link">
                 PhotoSpice   
                 </router-link>
             </h1>

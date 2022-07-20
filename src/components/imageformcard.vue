@@ -17,7 +17,7 @@
 
 <style scoped>
 div{
-    background-color: rgb(203, 255, 255);
+    background-color: rgb(172, 255, 230);
     border-radius: 8px;
     max-width: 600px;
 }
