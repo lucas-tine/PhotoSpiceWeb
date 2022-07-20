@@ -109,20 +109,19 @@ const simulationRequest = async () => {
                 selected: selected.value 
             }
           }),
-        },
+        }
       )
+    const status = response.status
+    const r = await response.json()
+    const data = await ({status: status, body: r})
 
-      const status = response.status
-      response = await response.json()
+    if (status != 200) {} // tratar
 
-      if (status != 200) {} // tratar
-
-      console.log (`resposta: ${response}`)
-      simulationData.type = response.simulationType;
-      simulationData.netlistResponse = response.netlistresponse;
-      simulationData.voltageImg = response.voltageGraph
-      simulationData.voltageImg = response.currentGraph
-      simulationLoaded.value = true
+    simulationData.type = simulationType.value
+    simulationData.netlistResponse = data.body.netlistResponse;
+    simulationData.voltageImg = data.body.voltageGraph
+    simulationData.voltageImg = data.body.currentGraph
+    simulationLoaded.value = true
     }
     catch (exception)
     {
