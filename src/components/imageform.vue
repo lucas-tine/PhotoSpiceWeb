@@ -17,7 +17,7 @@
     {
       buttonNotClicked.value = false;
       var response = await fetch(
-        'http://localhost:5000/image', 
+        'http://192.168.206.81:5000/image', 
         {
           method: 'POST',
           body: receivedImage,

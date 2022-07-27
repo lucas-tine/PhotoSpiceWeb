@@ -8,7 +8,7 @@ let netlist = ref([])
 let image = ref("")
 let ready = ref(false)
 let simulationType = ref("")
-let starttime = ref(0), stoptime = ref(0), maxstep = ref(0)
+let starttime = ref(""), stoptime = ref(""), maxstep = ref('')
 let selected = ref('')
 
 onMounted( async () => {
@@ -18,7 +18,7 @@ onMounted( async () => {
         router.push('/')
     }
     var response = await fetch(
-      `http://localhost:5000/netlist/${id}`, 
+      `http://192.168.206.81:5000/netlist/${id}`, 
       {
         method: 'GET',
       }
@@ -72,12 +72,12 @@ const simulationProblem = computed( () => {
         if (simulationType.value == 'transient')
         { 
             if (selected.value == '') return "sem componente ou nó selecionado para análise"
-            const start = Number.parseFloat(starttime.value) 
-            const stop = Number.parseFloat(stoptime.value)
-            if (start >= stop) return "o tempo de início é posterior ao tempo final"
-            const step = Number.parseFloat(maxstep.value)
-            if (step >= (stop - start)) return "o passo máximo é maior do que o tempo de simulação"
-            if (step < (stop-start)/10000) return "o passo máximo é muito menor que o tempo de simulação"
+            //const start = Number.parseFloat(starttime.value) 
+            //const stop = Number.parseFloat(stoptime.value)
+            //if (start >= stop) return "o tempo de início é posterior ao tempo final"
+            //const step = Number.parseFloat(maxstep.value)
+            //if (step >= (stop - start)) return "o passo máximo é maior do que o tempo de simulação"
+            //if (step < (stop-start)/10000) return "o passo máximo é muito menor que o tempo de simulação"
         }
         return ""
     }
@@ -90,10 +90,12 @@ const simulationLoaded = ref(false),
 connectionError = ref('')
 const simulationData = reactive({})
 const simulationRequest = async () => {
+    simulationLoaded.value = false
+    connectionError.value = ''
     try
     {
       var response = await fetch(
-        'http://localhost:5000/simulation', 
+        'http://192.168.206.81:5000/simulation', 
         {
           method: 'POST',
           headers: {
@@ -118,10 +120,18 @@ const simulationRequest = async () => {
     if (status != 200) {} // tratar
 
     simulationData.type = simulationType.value
-    simulationData.netlistResponse = data.body.netlistResponse;
-    simulationData.voltageImg = data.body.voltageGraph
-    simulationData.voltageImg = data.body.currentGraph
+
+    if (data.body.netlistResponse){
+        data.body.netlistResponse.reverse()
+        simulationData.netlistResponse = data.body.netlistResponse.join ('\n');
+    }
+
+    simulationData.voltageImg = data.body.voltageImg
+    simulationData.currentImg = data.body.currentImg
     simulationLoaded.value = true
+
+    console.log (`volageImg : ${simulationData.voltageImg}\ncurrentImg: ${simulationData.currentImg}`)
+
     }
     catch (exception)
     {
@@ -129,14 +139,13 @@ const simulationRequest = async () => {
     }
     
 }
-
 </script>
 
 <template>
     <centralizer>
         <div class="pscard container p-3 m-5">
             <h2 class="text-center my-2">
-                Confira seu esquemático
+                Confira a detecção do esquemático abaixo 
             </h2>
             <p class="text-justify px-3"> 
                 Observe as informações que foram 
@@ -190,11 +199,11 @@ const simulationRequest = async () => {
                         <div v-if="simulationType == 'transient'">
                             <div class="row my-3">
                                 <label for="starttime">tempo inicial</label>
-                                <input type="number" id="starttime" v-model="starttime"/>
+                                <input type="text" id="starttime" v-model="starttime"/>
                                 <label for="stoptime">tempo final</label>
-                                <input type="number" id="stoptime" v-model="stoptime"/>
+                                <input type="text" id="stoptime" v-model="stoptime"/>
                                 <label for="maxstep"></label>passo máximo
-                                <input type="number" id="maxstep" v-model="maxstep"/>
+                                <input type="text" id="maxstep" v-model="maxstep"/>
                             </div>
 
                             <div class="row">
@@ -220,7 +229,6 @@ const simulationRequest = async () => {
                         </button>
                     </form>
                 </div>
-                
             </div>
             <slot></slot>
             <div v-if="simulationLoaded" class="pscard p-3 m-5" style="background-color:#feb">
@@ -251,7 +259,7 @@ const simulationRequest = async () => {
 .pscard{
     background-color: rgb(203, 255, 238);
     border-radius: 8px;
-    max-width: 600px;
+    max-width: 850px;
 }
 .emp{
     font-weight: bold;
